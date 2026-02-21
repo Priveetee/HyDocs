@@ -22,6 +22,9 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
+# editor
+.vscode/
+
 # meilisearch binary and data
 meilisearch
 meili-data/
