@@ -1,0 +1,101 @@
+---
+import type { ModCategory } from "../data/types";
+
+interface Props {
+	categories: ModCategory[];
+	modCounts: Record<string, number>;
+	totalCount: number;
+}
+
+const { categories, modCounts, totalCount } = Astro.props;
+---
+
+<nav class="filter-nav" aria-label="Filtrer par catégorie">
+	<p class="nav-label">Catégories</p>
+	<button class="filter-btn active" data-filter="all">
+		<span class="name">Tous les mods</span>
+		<span class="count">{totalCount}</span>
+	</button>
+	{categories.map((cat) => (
+		<button class="filter-btn" data-filter={cat}>
+			<span class="name">{cat}</span>
+			<span class="count">{modCounts[cat] ?? 0}</span>
+		</button>
+	))}
+</nav>
+
+<script>
+	const buttons = document.querySelectorAll<HTMLButtonElement>(".filter-btn");
+	const cards = document.querySelectorAll<HTMLElement>(".mod-card");
+
+	const applyFilter = (filter: string) => {
+		buttons.forEach((btn) => btn.classList.toggle("active", btn.dataset.filter === filter));
+		cards.forEach((card) => {
+			const visible = filter === "all" || card.dataset.category === filter;
+			card.style.display = visible ? "" : "none";
+		});
+	};
+
+	buttons.forEach((btn) => {
+		btn.addEventListener("click", () => applyFilter(btn.dataset.filter ?? "all"));
+	});
+</script>
+
+<style>
+	.filter-nav {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.nav-label {
+		font-size: 0.68rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.12em;
+		color: var(--text-3);
+		padding: 0 0.5rem;
+		margin-bottom: 0.6rem;
+	}
+
+	.filter-btn {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		padding: 0.5rem 0.65rem;
+		border: none;
+		border-radius: 7px;
+		background: transparent;
+		color: var(--text-3);
+		font-size: 0.875rem;
+		font-family: inherit;
+		cursor: pointer;
+		transition: background 0.12s, color 0.12s;
+		text-align: left;
+	}
+
+	.filter-btn:hover {
+		background: var(--surface-hover);
+		color: var(--text-2);
+	}
+
+	.filter-btn.active {
+		background: var(--accent-dim);
+		color: var(--accent);
+		font-weight: 600;
+	}
+
+	.filter-btn.active .count {
+		color: var(--accent);
+		opacity: 0.75;
+	}
+
+	.count {
+		font-size: 0.72rem;
+		color: var(--text-3);
+		font-family: "Geist Mono", monospace;
+		min-width: 1.5rem;
+		text-align: right;
+	}
+</style>
