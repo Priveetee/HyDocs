@@ -1,0 +1,76 @@
+---
+interface Props {
+	title: string;
+	description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content={description} />
+		<title>{title}</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
+<style is:global>
+	:root {
+		--bg: #141414;
+		--surface: #1e1e1e;
+		--surface-hover: #252525;
+		--surface-2: #2a2a2a;
+		--border: #303030;
+		--border-muted: #232323;
+		--text: #f0f0f0;
+		--text-2: #b0b0b0;
+		--text-3: #666;
+		--accent: #e8a83e;
+		--accent-dim: rgba(232, 168, 62, 0.12);
+		--code-bg: #1a1a1a;
+		--code-text: #d4d4d4;
+		--op-text: #e8a83e;
+		--op-bg: rgba(232, 168, 62, 0.1);
+		--value-text: #7fba84;
+		--modal-bg: #1a1a1a;
+		--modal-overlay: rgba(0, 0, 0, 0.65);
+	}
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+		margin: 0;
+		padding: 0;
+	}
+
+	html {
+		font-family: "Geist", system-ui, -apple-system, sans-serif;
+		font-size: 16px;
+		background: var(--bg);
+		color: var(--text);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	body {
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+	}
+
+	code, kbd, pre {
+		font-family: "Geist Mono", "SF Mono", monospace;
+	}
+</style>
