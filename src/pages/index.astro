@@ -1,4 +1,5 @@
 ---
+import CategoryDrawer from "../components/CategoryDrawer.astro";
 import CategoryFilter from "../components/CategoryFilter.astro";
 import ModCard from "../components/ModCard.astro";
 import SearchModal from "../components/SearchModal.astro";
@@ -17,18 +18,7 @@ const modCounts = Object.fromEntries(
 >
 	<SiteHeader modCount={ALL_MODS.length} />
 
-	<div class="drawer-overlay" id="drawer-overlay" hidden></div>
-	<div class="drawer" id="category-drawer" aria-hidden="true">
-		<div class="drawer-header">
-			<span class="drawer-title">Catégories</span>
-			<button class="drawer-close" id="drawer-close" aria-label="Fermer">
-				<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-					<path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-				</svg>
-			</button>
-		</div>
-		<CategoryFilter categories={CATEGORIES} modCounts={modCounts} totalCount={ALL_MODS.length} />
-	</div>
+	<CategoryDrawer categories={CATEGORIES} modCounts={modCounts} totalCount={ALL_MODS.length} />
 
 	<div class="layout">
 		<aside class="sidebar">
@@ -43,100 +33,29 @@ const modCounts = Object.fromEntries(
 </BaseLayout>
 
 <style>
-	.drawer-overlay {
-		display: none;
-		position: fixed;
-		inset: 0;
-		background: rgba(0, 0, 0, 0.6);
-		z-index: 200;
-		backdrop-filter: blur(2px);
-	}
-
-	.drawer-overlay.visible { display: block; }
-
-	.drawer {
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		background: var(--surface);
-		border-top: 1px solid var(--border);
-		border-radius: 16px 16px 0 0;
-		z-index: 201;
-		padding: 0 1.25rem 2rem;
-		transform: translateY(100%);
-		transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-		max-height: 80vh;
-		overflow-y: auto;
-	}
-
-	.drawer.open { transform: translateY(0); }
-
-	.drawer-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 1rem 0 0.75rem;
-		margin-bottom: 0.5rem;
-		border-bottom: 1px solid var(--border-muted);
-	}
-
-	.drawer-title {
-		font-size: 0.875rem;
-		font-weight: 600;
-		color: var(--text);
-	}
-
-	.drawer-close {
-		background: none;
-		border: none;
-		color: var(--text-3);
-		cursor: pointer;
-		padding: 0.25rem;
-		display: flex;
-		align-items: center;
-		border-radius: 4px;
-		transition: color 0.1s;
-	}
-
-	.drawer-close:hover { color: var(--text); }
-
 	.layout {
-		display: flex;
-		max-width: 1400px;
-		margin: 0 auto;
-		width: 100%;
+		display: flex; max-width: 1400px;
+		margin: 0 auto; width: 100%;
 		min-height: calc(100vh - 64px);
 	}
-
 	.sidebar {
-		width: 220px;
-		flex-shrink: 0;
+		width: 220px; flex-shrink: 0;
 		border-right: 1px solid var(--border);
 		padding: 1.5rem 1.25rem;
-		position: sticky;
-		top: 64px;
-		height: calc(100vh - 64px);
-		overflow-y: auto;
+		position: sticky; top: 64px;
+		height: calc(100vh - 64px); overflow-y: auto;
 	}
-
 	.content {
-		flex: 1;
-		min-width: 0;
+		flex: 1; min-width: 0;
 		padding: 1.5rem 2rem 3rem;
-		display: flex;
-		flex-direction: column;
-		gap: 1px;
+		display: flex; flex-direction: column; gap: 1px;
 	}
-
 	:global(.highlight) { animation: pulse-border 1.2s ease-out; }
-
 	@keyframes pulse-border {
 		0% { outline: 2px solid var(--border); outline-offset: 0; }
 		50% { outline: 2px solid var(--accent); outline-offset: 2px; }
 		100% { outline: 2px solid transparent; outline-offset: 0; }
 	}
-
 	@media (max-width: 768px) {
 		.sidebar { display: none; }
 		.content { padding: 0.75rem 1rem 5rem; }
@@ -154,35 +73,6 @@ const modCounts = Object.fromEntries(
 	const kbdEl = document.getElementById("search-kbd");
 	if (kbdEl) kbdEl.textContent = isMac ? "⌘K" : "Ctrl+K";
 
-	const filterToggle = document.getElementById("filter-toggle");
-	const drawer = document.getElementById("category-drawer");
-	const overlay = document.getElementById("drawer-overlay");
-	const drawerClose = document.getElementById("drawer-close");
-
-	function openDrawer() {
-		drawer?.classList.add("open");
-		overlay?.classList.add("visible");
-		filterToggle?.classList.add("active");
-		overlay?.removeAttribute("hidden");
-	}
-
-	function closeDrawer() {
-		drawer?.classList.remove("open");
-		overlay?.classList.remove("visible");
-		filterToggle?.classList.remove("active");
-		setTimeout(() => overlay?.setAttribute("hidden", ""), 200);
-	}
-
-	filterToggle?.addEventListener("click", () => {
-		drawer?.classList.contains("open") ? closeDrawer() : openDrawer();
-	});
-	overlay?.addEventListener("click", closeDrawer);
-	drawerClose?.addEventListener("click", closeDrawer);
-
-	document.querySelectorAll(".drawer .filter-btn").forEach((btn) => {
-		btn.addEventListener("click", () => setTimeout(closeDrawer, 150));
-	});
-
 	inView(
 		".mod-card",
 		(el) => {
@@ -191,3 +81,5 @@ const modCounts = Object.fromEntries(
 		{ amount: 0.1 },
 	);
 </script>
+
+<script src="../scripts/category-drawer.ts"></script>

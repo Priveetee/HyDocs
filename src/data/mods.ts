@@ -1,12 +1,9 @@
 import { COMBAT_MODS } from "./mods-combat";
+import { COSMETIC_MODS } from "./mods-cosmetic";
 import { CRAFT_MODS } from "./mods-craft";
 import { AGRICULTURE_MODS, EXPLORATION_MODS } from "./mods-exploration-agri";
-import {
-	COSMETIC_MODS,
-	INTERFACE_MODS,
-	SERVER_MODS,
-	TAMING_MODS,
-} from "./mods-other";
+import { INTERFACE_MODS, TAMING_MODS } from "./mods-other";
+import { SERVER_MODS } from "./mods-server";
 import type { Mod, ModCategory } from "./types";
 
 export const ALL_MODS: Mod[] = [

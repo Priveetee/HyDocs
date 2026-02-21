@@ -28,13 +28,7 @@ const initials = mod.name.split(" ").map((w: string) => w[0]).join("").slice(0, 
 		</div>
 		<span class="mod-author">{mod.author}</span>
 		{mod.curseforgeUrl && (
-			<a
-				href={mod.curseforgeUrl}
-				target="_blank"
-				rel="noopener noreferrer"
-				class="ext-link"
-				onclick="event.stopPropagation()"
-			>
+			<a href={mod.curseforgeUrl} target="_blank" rel="noopener noreferrer" class="ext-link" onclick="event.stopPropagation()">
 				CF ↗
 			</a>
 		)}
@@ -55,151 +49,58 @@ const initials = mod.name.split(" ").map((w: string) => w[0]).join("").slice(0, 
 </article>
 
 <style>
-	.mod-card {
-		border-bottom: 1px solid var(--border-muted);
-	}
-
+	.mod-card { border-bottom: 1px solid var(--border-muted); }
 	.mod-card:first-child { border-top: 1px solid var(--border-muted); }
-
 	.mod-row {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-		width: 100%;
-		padding: 1rem 0.5rem;
-		background: none;
-		border: none;
-		cursor: pointer;
-		text-align: left;
-		transition: background 0.15s;
-		border-radius: 6px;
+		display: flex; align-items: center; gap: 1rem;
+		width: 100%; padding: 1rem 0.5rem;
+		background: none; border: none; cursor: pointer; text-align: left;
+		transition: background 0.15s; border-radius: 6px;
 	}
-
-	.mod-row:hover { background: var(--surface-hover); }
-	.mod-row[aria-expanded="true"] { background: var(--surface-hover); }
-
+	.mod-row:hover, .mod-row[aria-expanded="true"] { background: var(--surface-hover); }
+	.mod-row:hover .mod-name, .mod-row[aria-expanded="true"] .mod-name { color: var(--accent); }
 	.mod-avatar {
-		width: 40px;
-		height: 40px;
-		border-radius: 10px;
-		background: var(--surface);
-		border: 1px solid var(--border);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-shrink: 0;
-		overflow: hidden;
-		font-size: 0.75rem;
-		font-weight: 700;
-		color: var(--accent);
-		font-family: "Geist Mono", monospace;
-		letter-spacing: 0.02em;
+		width: 40px; height: 40px; border-radius: 10px;
+		background: var(--surface); border: 1px solid var(--border);
+		display: flex; align-items: center; justify-content: center;
+		flex-shrink: 0; overflow: hidden;
+		font-size: 0.75rem; font-weight: 700; color: var(--accent);
+		font-family: "Geist Mono", monospace; letter-spacing: 0.02em;
 	}
-
 	.mod-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-	.mod-summary {
-		flex: 1;
-		min-width: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
-	}
-
+	.mod-summary { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.25rem; }
 	.mod-name {
-		font-size: 1rem;
-		font-weight: 600;
-		color: var(--text);
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		letter-spacing: -0.01em;
+		font-size: 1rem; font-weight: 600; color: var(--text);
+		white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.01em;
 	}
-
-	.mod-row:hover .mod-name,
-	.mod-row[aria-expanded="true"] .mod-name {
-		color: var(--accent);
-	}
-
-	.mod-meta {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		font-size: 0.775rem;
-	}
-
+	.mod-meta { display: flex; align-items: center; gap: 0.5rem; font-size: 0.775rem; }
 	.mod-cat { color: var(--text-3); }
 	.mod-ver {
-		color: var(--text-3);
-		font-family: "Geist Mono", monospace;
-		background: var(--surface);
-		border: 1px solid var(--border-muted);
-		padding: 0.05rem 0.4rem;
-		border-radius: 3px;
+		color: var(--text-3); font-family: "Geist Mono", monospace;
+		background: var(--surface); border: 1px solid var(--border-muted);
+		padding: 0.05rem 0.4rem; border-radius: 3px;
 	}
-
-	.mod-author {
-		font-size: 0.825rem;
-		color: var(--text-3);
-		white-space: nowrap;
-		flex-shrink: 0;
-	}
-
+	.mod-author { font-size: 0.825rem; color: var(--text-3); white-space: nowrap; flex-shrink: 0; }
 	.ext-link {
-		font-size: 0.775rem;
-		color: var(--text-3);
-		text-decoration: none;
-		flex-shrink: 0;
-		padding: 0.25rem 0.5rem;
-		border-radius: 5px;
-		border: 1px solid var(--border);
-		transition: color 0.1s, border-color 0.1s;
+		font-size: 0.775rem; color: var(--text-3); text-decoration: none;
+		flex-shrink: 0; padding: 0.25rem 0.5rem; border-radius: 5px;
+		border: 1px solid var(--border); transition: color 0.1s, border-color 0.1s;
 	}
-
 	.ext-link:hover { color: var(--accent); border-color: var(--accent); }
-
-	.chevron {
-		color: var(--text-3);
-		flex-shrink: 0;
-		transition: transform 0.2s, color 0.15s;
-	}
-
-	.mod-row[aria-expanded="true"] .chevron {
-		transform: rotate(180deg);
-		color: var(--accent);
-	}
-
+	.chevron { color: var(--text-3); flex-shrink: 0; transition: transform 0.2s, color 0.15s; }
+	.mod-row[aria-expanded="true"] .chevron { transform: rotate(180deg); color: var(--accent); }
 	.mod-detail {
 		padding: 0.25rem 0.5rem 1.5rem 3.5rem;
-		display: flex;
-		flex-direction: column;
-		gap: 1.25rem;
+		display: flex; flex-direction: column; gap: 1.25rem;
 	}
-
 	.mod-detail[hidden] { display: none; }
-
-	.detail-desc {
-		font-size: 0.95rem;
-		color: var(--text-2);
-		line-height: 1.7;
-	}
-
+	.detail-desc { font-size: 0.95rem; color: var(--text-2); line-height: 1.7; }
 	.detail-usage { display: flex; flex-direction: column; gap: 0.3rem; }
-
 	.section-label {
-		font-size: 0.7rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
-		color: var(--text-3);
+		font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+		letter-spacing: 0.08em; color: var(--text-3);
 	}
-
-	.usage-text {
-		font-size: 0.925rem;
-		color: var(--text-2);
-		line-height: 1.65;
-	}
-
+	.usage-text { font-size: 0.925rem; color: var(--text-2); line-height: 1.65; }
 	@media (max-width: 768px) {
 		.mod-author { display: none; }
 		.mod-detail { padding: 0.25rem 0 1.25rem 3rem; }
@@ -207,17 +108,4 @@ const initials = mod.name.split(" ").map((w: string) => w[0]).join("").slice(0, 
 	}
 </style>
 
-<script>
-	for (const row of document.querySelectorAll<HTMLButtonElement>(".mod-row")) {
-		const detailId = row.getAttribute("aria-controls");
-		if (!detailId) continue;
-		const detail = document.getElementById(detailId);
-		if (!detail) continue;
-
-		row.addEventListener("click", () => {
-			const expanded = row.getAttribute("aria-expanded") === "true";
-			row.setAttribute("aria-expanded", expanded ? "false" : "true");
-			detail.hidden = expanded;
-		});
-	}
-</script>
+<script src="../scripts/mod-card.ts"></script>
