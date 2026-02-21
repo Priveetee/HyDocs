@@ -1,0 +1,30 @@
+services:
+  hytale-meili:
+    image: getmeili/meilisearch:v1.11
+    container_name: hytale-meili
+    environment:
+      - MEILI_NO_ANALYTICS=true
+      - MEILI_ENV=development
+    volumes:
+      - ./meili-data:/meili_data
+    ports:
+      - "127.0.0.1:7701:7700"
+    restart: unless-stopped
+    networks:
+      - proxy
+
+  hytale-web:
+    image: oven/bun:1
+    container_name: hytale-web
+    working_dir: /app
+    command: bun run serve.ts
+    volumes:
+      - ./dist:/app/dist:ro
+      - ./serve.ts:/app/serve.ts:ro
+    restart: unless-stopped
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
