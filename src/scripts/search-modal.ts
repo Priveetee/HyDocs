@@ -14,6 +14,7 @@ let results: {
 	id: string;
 	name: string;
 	category: string;
+	description?: string;
 	imageUrl?: string;
 }[] = [];
 
@@ -64,8 +65,11 @@ function renderResults() {
 		li.setAttribute("aria-selected", "false");
 		const img = hit.imageUrl
 			? `<img class="result-img" src="${hit.imageUrl}" alt="" loading="lazy" />`
-			: `<div class="result-img-placeholder">${hit.name.slice(0, 2).toUpperCase()}</div>`;
-		li.innerHTML = `${img}<div class="result-body"><div class="result-name">${hit.name}</div><span class="result-cat">${hit.category}</span></div>`;
+			: `<div class="result-img-placeholder"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.2"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div>`;
+		const desc = hit.description
+			? `<p class="result-desc">${hit.description.length > 80 ? `${hit.description.slice(0, 80)}…` : hit.description}</p>`
+			: "";
+		li.innerHTML = `${img}<div class="result-body"><div class="result-name">${hit.name}</div>${desc}</div><span class="result-cat">${hit.category}</span>`;
 		li.addEventListener("click", () => scrollToMod(hit.id, hit.category));
 		resultsList.appendChild(li);
 	}
