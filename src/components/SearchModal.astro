@@ -1,0 +1,269 @@
+---
+---
+
+<div id="search-modal" class="overlay" aria-modal="true" role="dialog" hidden>
+	<div class="modal">
+		<div class="input-row">
+			<svg width="15" height="15" viewBox="0 0 16 16" fill="none" class="search-icon">
+				<circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.5"/>
+				<path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+			</svg>
+			<input
+				id="search-input"
+				type="text"
+				placeholder="Rechercher un mod..."
+				autocomplete="off"
+				spellcheck="false"
+			/>
+			<kbd class="esc-hint">Esc</kbd>
+		</div>
+		<ul id="search-results" class="results" role="listbox"></ul>
+		<p id="search-empty" class="empty" hidden>Aucun résultat.</p>
+		<div class="footer-hint">
+			<span><kbd>↑↓</kbd> naviguer</span>
+			<span><kbd>↵</kbd> aller au mod</span>
+			<span><kbd>Esc</kbd> fermer</span>
+		</div>
+	</div>
+</div>
+
+<style>
+	.overlay {
+		position: fixed;
+		inset: 0;
+		background: var(--modal-overlay);
+		z-index: 1000;
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+		padding-top: 10vh;
+	}
+
+	.overlay[hidden] { display: none; }
+
+	.modal {
+		width: 100%;
+		max-width: 580px;
+		background: var(--modal-bg);
+		border: 1px solid var(--border);
+		border-radius: 14px;
+		overflow: hidden;
+		box-shadow: 0 32px 80px rgba(0,0,0,0.75), 0 0 0 1px rgba(232,168,62,0.05);
+	}
+
+	.input-row {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.9rem 1.1rem;
+		border-bottom: 1px solid var(--border-muted);
+	}
+
+	.search-icon { color: var(--text-3); flex-shrink: 0; }
+
+	input {
+		flex: 1;
+		background: none;
+		border: none;
+		outline: none;
+		color: var(--text);
+		font-family: inherit;
+		font-size: 0.975rem;
+	}
+
+	input::placeholder { color: var(--text-3); }
+
+	.esc-hint {
+		font-size: 0.7rem;
+		padding: 0.15rem 0.4rem;
+		border: 1px solid var(--border);
+		border-radius: 4px;
+		color: var(--text-3);
+		background: var(--bg);
+	}
+
+	.results {
+		list-style: none;
+		max-height: 380px;
+		overflow-y: auto;
+	}
+
+	.results li {
+		display: flex;
+		align-items: center;
+		gap: 0.85rem;
+		padding: 0.75rem 1.1rem;
+		cursor: pointer;
+		border-bottom: 1px solid var(--border-muted);
+		transition: background 0.1s;
+	}
+
+	.results li:last-child { border-bottom: none; }
+	.results li:hover, .results li[aria-selected="true"] {
+		background: var(--accent-dim);
+	}
+
+	.results li[aria-selected="true"] .result-name {
+		color: var(--accent);
+	}
+
+	.result-img {
+		width: 32px;
+		height: 32px;
+		border-radius: 6px;
+		object-fit: cover;
+		flex-shrink: 0;
+		background: var(--surface);
+	}
+
+	.result-img-placeholder {
+		width: 32px;
+		height: 32px;
+		border-radius: 6px;
+		background: var(--surface);
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.7rem;
+		color: var(--text-3);
+		font-family: "Geist Mono", monospace;
+	}
+
+	.result-body {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.result-name {
+		font-size: 0.925rem;
+		font-weight: 500;
+		color: var(--text);
+	}
+
+	.result-cat {
+		font-size: 0.775rem;
+		color: var(--text-3);
+		margin-top: 0.1rem;
+	}
+
+	.footer-hint {
+		display: flex;
+		gap: 1.25rem;
+		padding: 0.6rem 1.1rem;
+		border-top: 1px solid var(--border-muted);
+		font-size: 0.72rem;
+		color: var(--text-3);
+	}
+
+	.footer-hint kbd {
+		font-family: "Geist Mono", monospace;
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 3px;
+		padding: 0.05rem 0.3rem;
+		font-size: 0.7rem;
+	}
+
+	.empty {
+		padding: 1.5rem 1.1rem;
+		color: var(--text-3);
+		font-size: 0.9rem;
+	}
+</style>
+
+<script>
+	const MEILI = "/meili/indexes/mods/search";
+
+	const modal = document.getElementById("search-modal") as HTMLElement;
+	const input = document.getElementById("search-input") as HTMLInputElement;
+	const resultsList = document.getElementById("search-results") as HTMLUListElement;
+	const emptyMsg = document.getElementById("search-empty") as HTMLParagraphElement;
+	const trigger = document.getElementById("search-trigger");
+
+	let activeIndex = -1;
+	let results: { id: string; name: string; category: string; imageUrl?: string }[] = [];
+
+	function open() {
+		modal.hidden = false;
+		input.focus();
+		input.value = "";
+		clearResults();
+	}
+
+	function close() {
+		modal.hidden = true;
+		activeIndex = -1;
+	}
+
+	function clearResults() {
+		resultsList.innerHTML = "";
+		emptyMsg.hidden = true;
+		results = [];
+		activeIndex = -1;
+	}
+
+	async function search(q: string) {
+		if (!q.trim()) { clearResults(); return; }
+		try {
+			const res = await fetch(MEILI, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ q, limit: 7 }),
+			});
+			const data = await res.json();
+			results = data.hits ?? [];
+		} catch {
+			results = [];
+		}
+		renderResults();
+	}
+
+	function renderResults() {
+		resultsList.innerHTML = "";
+		emptyMsg.hidden = results.length > 0;
+		for (const hit of results) {
+			const li = document.createElement("li");
+			li.setAttribute("role", "option");
+			li.setAttribute("aria-selected", "false");
+			const img = hit.imageUrl
+				? `<img class="result-img" src="${hit.imageUrl}" alt="" loading="lazy" />`
+				: `<div class="result-img-placeholder">${hit.name.slice(0, 2).toUpperCase()}</div>`;
+			li.innerHTML = `${img}<div class="result-body"><div class="result-name">${hit.name}</div><div class="result-cat">${hit.category}</div></div>`;
+			li.addEventListener("click", () => scrollToMod(hit.id));
+			resultsList.appendChild(li);
+		}
+		activeIndex = -1;
+	}
+
+	function setActive(idx: number) {
+		const items = resultsList.querySelectorAll("li");
+		items.forEach((li, i) => li.setAttribute("aria-selected", i === idx ? "true" : "false"));
+		activeIndex = idx;
+	}
+
+	function scrollToMod(id: string) {
+		close();
+		const el = document.getElementById(`mod-${id}`);
+		if (el) {
+			el.scrollIntoView({ behavior: "smooth", block: "start" });
+			el.classList.add("highlight");
+			setTimeout(() => el.classList.remove("highlight"), 1200);
+		}
+	}
+
+	window.addEventListener("open-search", open);
+	modal.addEventListener("click", (e) => { if (e.target === modal) close(); });
+	input.addEventListener("input", (e) => search((e.target as HTMLInputElement).value));
+
+	document.addEventListener("keydown", (e) => {
+		if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); open(); return; }
+		if (e.key === "Escape" && !modal.hidden) { close(); return; }
+		if (modal.hidden) return;
+		const count = results.length;
+		if (count === 0) return;
+		if (e.key === "ArrowDown") { e.preventDefault(); setActive((activeIndex + 1) % count); }
+		if (e.key === "ArrowUp") { e.preventDefault(); setActive((activeIndex - 1 + count) % count); }
+		if (e.key === "Enter" && activeIndex >= 0) scrollToMod(results[activeIndex].id);
+	});
+</script>
