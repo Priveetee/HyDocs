@@ -68,6 +68,19 @@ export const EXPLORATION_MODS: Mod[] = [
 		commands: [],
 		configParams: [],
 	},
+	{
+		id: "simple-scaffolding",
+		name: "SimpleScaffolding",
+		version: "1.0.2",
+		author: "Higgue",
+		category: "Exploration",
+		description:
+			"Ajoute 4 types d'échafaudages grimpables (IsClimbable: true). Flimsy (Fibre + Stick, x5 au Fieldcraft/Workbench), Frail (Linen Fabric + Bone Fragment), Hardwood (Iron Bar + bois), Industrial (Cobalt Bar + Iron Bar).",
+		usage:
+			"Crafter les échafaudages selon les matériaux disponibles et les placer pour grimper. Tous les types sont climbable.",
+		commands: [],
+		configParams: [],
+	},
 ];
 
 export const AGRICULTURE_MODS: Mod[] = [

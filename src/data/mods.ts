@@ -1,6 +1,7 @@
 import { COMBAT_MODS } from "./mods-combat";
 import { COSMETIC_MODS } from "./mods-cosmetic";
 import { CRAFT_MODS } from "./mods-craft";
+import { HAMMERS_MODS } from "./mods-craft-hammers";
 import { AGRICULTURE_MODS, EXPLORATION_MODS } from "./mods-exploration-agri";
 import { INTERFACE_MODS, TAMING_MODS } from "./mods-other";
 import { SERVER_MODS } from "./mods-server";
@@ -11,6 +12,7 @@ export const ALL_MODS: Mod[] = [
 	...EXPLORATION_MODS,
 	...AGRICULTURE_MODS,
 	...CRAFT_MODS,
+	...HAMMERS_MODS,
 	...TAMING_MODS,
 	...INTERFACE_MODS,
 	...SERVER_MODS,

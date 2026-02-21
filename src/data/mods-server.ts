@@ -120,4 +120,24 @@ export const SERVER_MODS: Mod[] = [
 			},
 		],
 	},
+	{
+		id: "hytalor",
+		name: "Hytalor",
+		version: "2.2",
+		author: "HypersonicSharkz",
+		category: "Serveur",
+		description:
+			"Framework de patching d'assets permettant à plusieurs mods de modifier les mêmes fichiers sans conflit. Utilise JSONPath pour cibler et modifier des propriétés précises. Les patches sont définis dans le dossier HytalorOverrides/.",
+		usage:
+			"Placer les fichiers de patch dans HytalorOverrides/. Utiliser /hytalor reload pour appliquer les modifications à chaud sans redémarrer le serveur.",
+		commands: [
+			{
+				command: "/hytalor reload",
+				description: "Recharge tous les patches Hytalor à chaud",
+				requiresOp: true,
+			},
+		],
+		configParams: [],
+		curseforgeUrl: "https://github.com/HypersonicSharkz/Hytalor",
+	},
 ];

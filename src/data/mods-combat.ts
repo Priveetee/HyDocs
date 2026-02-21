@@ -139,4 +139,17 @@ export const COMBAT_MODS: Mod[] = [
 		configParams: [],
 		curseforgeUrl: "https://curseforge.com/hytale/mods/skeleton-banging-shield",
 	},
+	{
+		id: "jcp-explosives-pack",
+		name: "JCP Explosives Pack",
+		version: "1.0.7",
+		author: "Pipita (JCP)",
+		category: "Combat",
+		description:
+			"Pack d'explosifs modulaire avec établi dédié (Explosive Workbench). Ajoute un Rocket Launcher (3 tiers, munitions Rocket craftées avec 5x Iron Bar + 2x Boom Powder), un Explosive Crossbow, des Mines posables (Dirt/Stone/Grass, 3 tiers), du C4 (Adhesive Bomb, 2 tiers) et des Bang Snaps.",
+		usage:
+			"Crafter toutes les armes et munitions à l'Explosive Workbench. Les mines se posent au sol et explosent au contact. Le Rocket Launcher se charge avec des Rockets (Tier 1/2/3). Le C4 (Adhesive Bomb) s'active à distance.",
+		commands: [],
+		configParams: [],
+	},
 ];
