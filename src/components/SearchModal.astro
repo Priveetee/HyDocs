@@ -142,9 +142,15 @@
 	}
 
 	.result-cat {
-		font-size: 0.775rem;
-		color: var(--text-3);
-		margin-top: 0.1rem;
+		display: inline-block;
+		margin-top: 0.25rem;
+		font-size: 0.7rem;
+		font-weight: 600;
+		color: var(--accent);
+		background: var(--accent-dim);
+		border-radius: 4px;
+		padding: 0.1rem 0.45rem;
+		letter-spacing: 0.02em;
 	}
 
 	.footer-hint {
@@ -229,8 +235,8 @@
 			const img = hit.imageUrl
 				? `<img class="result-img" src="${hit.imageUrl}" alt="" loading="lazy" />`
 				: `<div class="result-img-placeholder">${hit.name.slice(0, 2).toUpperCase()}</div>`;
-			li.innerHTML = `${img}<div class="result-body"><div class="result-name">${hit.name}</div><div class="result-cat">${hit.category}</div></div>`;
-			li.addEventListener("click", () => scrollToMod(hit.id));
+			li.innerHTML = `${img}<div class="result-body"><div class="result-name">${hit.name}</div><span class="result-cat">${hit.category}</span></div>`;
+			li.addEventListener("click", () => scrollToMod(hit.id, hit.category));
 			resultsList.appendChild(li);
 		}
 		activeIndex = -1;
@@ -242,14 +248,17 @@
 		activeIndex = idx;
 	}
 
-	function scrollToMod(id: string) {
+	function scrollToMod(id: string, category: string) {
 		close();
-		const el = document.getElementById(`mod-${id}`);
-		if (el) {
-			el.scrollIntoView({ behavior: "smooth", block: "start" });
+		const applyFilter = (window as unknown as Record<string, unknown>).applyFilter as ((f: string) => void) | undefined;
+		if (applyFilter) applyFilter("all");
+		setTimeout(() => {
+			const el = document.getElementById(`mod-${id}`);
+			if (!el) return;
+			el.scrollIntoView({ behavior: "smooth", block: "center" });
 			el.classList.add("highlight");
 			setTimeout(() => el.classList.remove("highlight"), 1200);
-		}
+		}, 50);
 	}
 
 	window.addEventListener("open-search", open);
@@ -264,6 +273,6 @@
 		if (count === 0) return;
 		if (e.key === "ArrowDown") { e.preventDefault(); setActive((activeIndex + 1) % count); }
 		if (e.key === "ArrowUp") { e.preventDefault(); setActive((activeIndex - 1 + count) % count); }
-		if (e.key === "Enter" && activeIndex >= 0) scrollToMod(results[activeIndex].id);
+		if (e.key === "Enter" && activeIndex >= 0) scrollToMod(results[activeIndex].id, results[activeIndex].category);
 	});
 </script>

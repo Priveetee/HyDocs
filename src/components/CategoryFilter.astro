@@ -39,6 +39,8 @@ const { categories, modCounts, totalCount } = Astro.props;
 	buttons.forEach((btn) => {
 		btn.addEventListener("click", () => applyFilter(btn.dataset.filter ?? "all"));
 	});
+
+	(window as unknown as Record<string, unknown>).applyFilter = applyFilter;
 </script>
 
 <style>
