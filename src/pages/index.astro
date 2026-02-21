@@ -2,6 +2,7 @@
 import CategoryFilter from "../components/CategoryFilter.astro";
 import ModCard from "../components/ModCard.astro";
 import SearchModal from "../components/SearchModal.astro";
+import SiteHeader from "../components/SiteHeader.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { ALL_MODS, CATEGORIES } from "../data/mods";
 
@@ -14,23 +15,20 @@ const modCounts = Object.fromEntries(
 	title="HyDocs — Mods"
 	description="Documentation des mods installés sur le serveur Hytale"
 >
-	<header class="site-header">
-		<div class="header-inner">
-			<div class="header-brand">
-				<img src="/logo.svg" alt="" class="site-logo" aria-hidden="true" />
-				<h1 class="site-title">HyDocs</h1>
-				<span class="site-sub">{ALL_MODS.length} mods installés</span>
-			</div>
-			<button class="search-trigger" id="search-trigger" aria-label="Rechercher">
-				<svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-					<circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.5"/>
-					<path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+	<SiteHeader modCount={ALL_MODS.length} />
+
+	<div class="drawer-overlay" id="drawer-overlay" hidden></div>
+	<div class="drawer" id="category-drawer" aria-hidden="true">
+		<div class="drawer-header">
+			<span class="drawer-title">Catégories</span>
+			<button class="drawer-close" id="drawer-close" aria-label="Fermer">
+				<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+					<path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
 				</svg>
-				<span>Rechercher un mod...</span>
-				<kbd id="search-kbd">⌘K</kbd>
 			</button>
 		</div>
-	</header>
+		<CategoryFilter categories={CATEGORIES} modCounts={modCounts} totalCount={ALL_MODS.length} />
+	</div>
 
 	<div class="layout">
 		<aside class="sidebar">
@@ -45,91 +43,63 @@ const modCounts = Object.fromEntries(
 </BaseLayout>
 
 <style>
-	.site-header {
-		border-bottom: 1px solid var(--border);
-		padding: 0 2rem;
-		height: 64px;
-		display: flex;
-		align-items: center;
-		position: sticky;
-		top: 0;
-		background: rgba(20, 20, 20, 0.92);
-		backdrop-filter: blur(12px);
-		z-index: 100;
+	.drawer-overlay {
+		display: none;
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.6);
+		z-index: 200;
+		backdrop-filter: blur(2px);
 	}
 
-	.header-inner {
-		width: 100%;
-		max-width: 1400px;
-		margin: 0 auto;
+	.drawer-overlay.visible { display: block; }
+
+	.drawer {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background: var(--surface);
+		border-top: 1px solid var(--border);
+		border-radius: 16px 16px 0 0;
+		z-index: 201;
+		padding: 0 1.25rem 2rem;
+		transform: translateY(100%);
+		transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+		max-height: 80vh;
+		overflow-y: auto;
+	}
+
+	.drawer.open { transform: translateY(0); }
+
+	.drawer-header {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 1rem;
+		padding: 1rem 0 0.75rem;
+		margin-bottom: 0.5rem;
+		border-bottom: 1px solid var(--border-muted);
 	}
 
-	.header-brand {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-	}
-
-	.site-logo {
-		width: 30px;
-		height: 30px;
-		flex-shrink: 0;
-	}
-
-	.site-title {
-		font-size: 1.15rem;
-		font-weight: 700;
-		letter-spacing: -0.02em;
+	.drawer-title {
+		font-size: 0.875rem;
+		font-weight: 600;
 		color: var(--text);
 	}
 
-	.site-sub {
-		font-size: 0.8rem;
+	.drawer-close {
+		background: none;
+		border: none;
 		color: var(--text-3);
-		background: var(--surface);
-		border: 1px solid var(--border);
-		border-radius: 20px;
-		padding: 0.2rem 0.65rem;
-	}
-
-	.search-trigger {
+		cursor: pointer;
+		padding: 0.25rem;
 		display: flex;
 		align-items: center;
-		gap: 0.55rem;
-		padding: 0.5rem 1rem;
-		background: var(--surface);
-		border: 1px solid var(--border);
-		border-radius: 8px;
-		color: var(--text-3);
-		font-size: 0.875rem;
-		cursor: pointer;
-		transition: border-color 0.15s, color 0.15s, background 0.15s;
-		white-space: nowrap;
-		min-width: 220px;
-		font-family: inherit;
-	}
-
-	.search-trigger span { flex: 1; text-align: left; }
-
-	.search-trigger:hover {
-		border-color: var(--accent);
-		color: var(--text-2);
-		background: var(--surface-hover);
-	}
-
-	.search-trigger kbd {
-		font-size: 0.7rem;
-		padding: 0.1rem 0.4rem;
-		border: 1px solid var(--border);
 		border-radius: 4px;
-		background: var(--bg);
-		font-family: "Geist Mono", monospace;
-		color: var(--text-3);
+		transition: color 0.1s;
 	}
+
+	.drawer-close:hover { color: var(--text); }
 
 	.layout {
 		display: flex;
@@ -159,29 +129,17 @@ const modCounts = Object.fromEntries(
 		gap: 1px;
 	}
 
-	:global(.highlight) {
-		animation: pulse-border 1.2s ease-out;
-	}
+	:global(.highlight) { animation: pulse-border 1.2s ease-out; }
 
 	@keyframes pulse-border {
 		0% { outline: 2px solid var(--border); outline-offset: 0; }
-		50% { outline: 2px solid #555; outline-offset: 2px; }
+		50% { outline: 2px solid var(--accent); outline-offset: 2px; }
 		100% { outline: 2px solid transparent; outline-offset: 0; }
 	}
 
 	@media (max-width: 768px) {
-		.layout { flex-direction: column; }
-		.sidebar {
-			width: 100%;
-			border-right: none;
-			border-bottom: 1px solid var(--border);
-			position: static;
-			height: auto;
-			padding: 1rem 1.25rem;
-		}
-		.content { padding: 1rem 1.25rem 2rem; }
-		.search-trigger { min-width: 140px; }
-		.search-trigger kbd { display: none; }
+		.sidebar { display: none; }
+		.content { padding: 0.75rem 1rem 5rem; }
 	}
 </style>
 
@@ -195,6 +153,35 @@ const modCounts = Object.fromEntries(
 	const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
 	const kbdEl = document.getElementById("search-kbd");
 	if (kbdEl) kbdEl.textContent = isMac ? "⌘K" : "Ctrl+K";
+
+	const filterToggle = document.getElementById("filter-toggle");
+	const drawer = document.getElementById("category-drawer");
+	const overlay = document.getElementById("drawer-overlay");
+	const drawerClose = document.getElementById("drawer-close");
+
+	function openDrawer() {
+		drawer?.classList.add("open");
+		overlay?.classList.add("visible");
+		filterToggle?.classList.add("active");
+		overlay?.removeAttribute("hidden");
+	}
+
+	function closeDrawer() {
+		drawer?.classList.remove("open");
+		overlay?.classList.remove("visible");
+		filterToggle?.classList.remove("active");
+		setTimeout(() => overlay?.setAttribute("hidden", ""), 200);
+	}
+
+	filterToggle?.addEventListener("click", () => {
+		drawer?.classList.contains("open") ? closeDrawer() : openDrawer();
+	});
+	overlay?.addEventListener("click", closeDrawer);
+	drawerClose?.addEventListener("click", closeDrawer);
+
+	document.querySelectorAll(".drawer .filter-btn").forEach((btn) => {
+		btn.addEventListener("click", () => setTimeout(closeDrawer, 150));
+	});
 
 	inView(
 		".mod-card",

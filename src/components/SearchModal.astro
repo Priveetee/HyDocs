@@ -51,6 +51,17 @@
 		box-shadow: 0 32px 80px rgba(0,0,0,0.75), 0 0 0 1px rgba(232,168,62,0.05);
 	}
 
+	@media (max-width: 768px) {
+		.overlay { padding-top: 0; align-items: flex-end; }
+		.modal {
+			border-radius: 16px 16px 0 0;
+			border-bottom: none;
+			max-width: 100%;
+		}
+		.footer-hint { display: none; }
+		.results { max-height: 55vh; }
+	}
+
 	.input-row {
 		display: flex;
 		align-items: center;

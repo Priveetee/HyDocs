@@ -199,6 +199,12 @@ const initials = mod.name.split(" ").map((w: string) => w[0]).join("").slice(0, 
 		color: var(--text-2);
 		line-height: 1.65;
 	}
+
+	@media (max-width: 768px) {
+		.mod-author { display: none; }
+		.mod-detail { padding: 0.25rem 0 1.25rem 3rem; }
+		.mod-name { font-size: 0.95rem; }
+	}
 </style>
 
 <script>
