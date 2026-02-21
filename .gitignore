@@ -31,3 +31,7 @@ meili-data/
 data.ms/
 data-hytale.ms/
 dumps/
+
+# default astro favicons
+public/favicon.ico
+public/favicon.svg
