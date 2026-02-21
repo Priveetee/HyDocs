@@ -1,0 +1,206 @@
+---
+import CategoryFilter from "../components/CategoryFilter.astro";
+import ModCard from "../components/ModCard.astro";
+import SearchModal from "../components/SearchModal.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { ALL_MODS, CATEGORIES } from "../data/mods";
+
+const modCounts = Object.fromEntries(
+	CATEGORIES.map((cat) => [cat, ALL_MODS.filter((m) => m.category === cat).length]),
+);
+---
+
+<BaseLayout
+	title="HyDocs — Mods"
+	description="Documentation des mods installés sur le serveur Hytale"
+>
+	<header class="site-header">
+		<div class="header-inner">
+			<div class="header-brand">
+				<img src="/logo.svg" alt="" class="site-logo" aria-hidden="true" />
+				<h1 class="site-title">HyDocs</h1>
+				<span class="site-sub">{ALL_MODS.length} mods installés</span>
+			</div>
+			<button class="search-trigger" id="search-trigger" aria-label="Rechercher">
+				<svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+					<circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.5"/>
+					<path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+				</svg>
+				<span>Rechercher un mod...</span>
+				<kbd id="search-kbd">⌘K</kbd>
+			</button>
+		</div>
+	</header>
+
+	<div class="layout">
+		<aside class="sidebar">
+			<CategoryFilter categories={CATEGORIES} modCounts={modCounts} totalCount={ALL_MODS.length} />
+		</aside>
+		<main class="content" id="mods-list">
+			{ALL_MODS.map((mod) => <ModCard mod={mod} />)}
+		</main>
+	</div>
+
+	<SearchModal />
+</BaseLayout>
+
+<style>
+	.site-header {
+		border-bottom: 1px solid var(--border);
+		padding: 0 2rem;
+		height: 64px;
+		display: flex;
+		align-items: center;
+		position: sticky;
+		top: 0;
+		background: rgba(20, 20, 20, 0.92);
+		backdrop-filter: blur(12px);
+		z-index: 100;
+	}
+
+	.header-inner {
+		width: 100%;
+		max-width: 1400px;
+		margin: 0 auto;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.header-brand {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.site-logo {
+		width: 30px;
+		height: 30px;
+		flex-shrink: 0;
+	}
+
+	.site-title {
+		font-size: 1.15rem;
+		font-weight: 700;
+		letter-spacing: -0.02em;
+		color: var(--text);
+	}
+
+	.site-sub {
+		font-size: 0.8rem;
+		color: var(--text-3);
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 20px;
+		padding: 0.2rem 0.65rem;
+	}
+
+	.search-trigger {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+		padding: 0.5rem 1rem;
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		color: var(--text-3);
+		font-size: 0.875rem;
+		cursor: pointer;
+		transition: border-color 0.15s, color 0.15s, background 0.15s;
+		white-space: nowrap;
+		min-width: 220px;
+		font-family: inherit;
+	}
+
+	.search-trigger span { flex: 1; text-align: left; }
+
+	.search-trigger:hover {
+		border-color: var(--accent);
+		color: var(--text-2);
+		background: var(--surface-hover);
+	}
+
+	.search-trigger kbd {
+		font-size: 0.7rem;
+		padding: 0.1rem 0.4rem;
+		border: 1px solid var(--border);
+		border-radius: 4px;
+		background: var(--bg);
+		font-family: "Geist Mono", monospace;
+		color: var(--text-3);
+	}
+
+	.layout {
+		display: flex;
+		max-width: 1400px;
+		margin: 0 auto;
+		width: 100%;
+		min-height: calc(100vh - 64px);
+	}
+
+	.sidebar {
+		width: 220px;
+		flex-shrink: 0;
+		border-right: 1px solid var(--border);
+		padding: 1.5rem 1.25rem;
+		position: sticky;
+		top: 64px;
+		height: calc(100vh - 64px);
+		overflow-y: auto;
+	}
+
+	.content {
+		flex: 1;
+		min-width: 0;
+		padding: 1.5rem 2rem 3rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+	}
+
+	:global(.highlight) {
+		animation: pulse-border 1.2s ease-out;
+	}
+
+	@keyframes pulse-border {
+		0% { outline: 2px solid var(--border); outline-offset: 0; }
+		50% { outline: 2px solid #555; outline-offset: 2px; }
+		100% { outline: 2px solid transparent; outline-offset: 0; }
+	}
+
+	@media (max-width: 768px) {
+		.layout { flex-direction: column; }
+		.sidebar {
+			width: 100%;
+			border-right: none;
+			border-bottom: 1px solid var(--border);
+			position: static;
+			height: auto;
+			padding: 1rem 1.25rem;
+		}
+		.content { padding: 1rem 1.25rem 2rem; }
+		.search-trigger { min-width: 140px; }
+		.search-trigger kbd { display: none; }
+	}
+</style>
+
+<script>
+	import { animate, inView } from "motion";
+
+	document.getElementById("search-trigger")?.addEventListener("click", () => {
+		window.dispatchEvent(new CustomEvent("open-search"));
+	});
+
+	const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+	const kbdEl = document.getElementById("search-kbd");
+	if (kbdEl) kbdEl.textContent = isMac ? "⌘K" : "Ctrl+K";
+
+	inView(
+		".mod-card",
+		(el) => {
+			animate(el, { opacity: [0, 1], y: [12, 0] }, { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] });
+		},
+		{ amount: 0.1 },
+	);
+</script>
