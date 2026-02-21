@@ -1,0 +1,93 @@
+---
+import type { ModCommand } from "../data/types";
+
+interface Props {
+	commands: ModCommand[];
+}
+
+const { commands } = Astro.props;
+---
+
+{commands.length > 0 && (
+	<div class="section">
+		<p class="label">Commandes</p>
+		<ul class="list">
+			{commands.map((cmd) => (
+				<li class="item">
+					<div class="item-top">
+						<code class="cmd">{cmd.command}</code>
+						{cmd.requiresOp && <span class="op">OP</span>}
+					</div>
+					<p class="desc">{cmd.description}</p>
+				</li>
+			))}
+		</ul>
+	</div>
+)}
+
+<style>
+	.section {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.label {
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--text-3);
+	}
+
+	.list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		overflow: hidden;
+	}
+
+	.item {
+		padding: 0.7rem 0.9rem;
+		background: var(--surface);
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+	}
+
+	.item-top {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+	}
+
+	.cmd {
+		font-size: 0.875rem;
+		color: var(--code-text);
+		background: var(--code-bg);
+		padding: 0.15rem 0.5rem;
+		border-radius: 4px;
+		font-family: "Geist Mono", monospace;
+	}
+
+	.op {
+		font-size: 0.7rem;
+		font-weight: 600;
+		color: var(--op-text);
+		background: var(--op-bg);
+		padding: 0.1rem 0.4rem;
+		border-radius: 3px;
+		letter-spacing: 0.04em;
+	}
+
+	.desc {
+		font-size: 0.875rem;
+		color: var(--text-3);
+		margin: 0;
+	}
+</style>
