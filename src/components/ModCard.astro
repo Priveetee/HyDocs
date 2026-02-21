@@ -1,64 +1,53 @@
 ---
 import type { Mod } from "../data/types";
-import CommandList from "./CommandList.astro";
-import ConfigTable from "./ConfigTable.astro";
 
 interface Props {
 	mod: Mod;
 }
 
 const { mod } = Astro.props;
-const initials = mod.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase();
+const initials = mod.name
+	.split(" ")
+	.map((w: string) => w[0])
+	.join("")
+	.slice(0, 2)
+	.toUpperCase();
 ---
 
-<article class="mod-card" id={`mod-${mod.id}`} data-category={mod.category}>
-	<button class="mod-row" aria-expanded="false" aria-controls={`detail-${mod.id}`}>
-		<div class="mod-avatar" aria-hidden="true">
-			{mod.imageUrl
-				? <img src={mod.imageUrl} alt="" width="36" height="36" loading="lazy" />
-				: <span>{initials}</span>
-			}
-		</div>
-		<div class="mod-summary">
-			<span class="mod-name">{mod.name}</span>
-			<span class="mod-meta">
-				<span class="mod-cat">{mod.category}</span>
-				<span class="mod-ver">{mod.version}</span>
-			</span>
-		</div>
-		<span class="mod-author">{mod.author}</span>
-		{mod.curseforgeUrl && (
-			<a href={mod.curseforgeUrl} target="_blank" rel="noopener noreferrer" class="ext-link" onclick="event.stopPropagation()">
-				CF ↗
-			</a>
-		)}
-		<svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none">
-			<path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-		</svg>
-	</button>
-
-	<div class="mod-detail" id={`detail-${mod.id}`} hidden>
-		<p class="detail-desc">{mod.description}</p>
-		<div class="detail-usage">
-			<p class="section-label">Utilisation</p>
-			<p class="usage-text">{mod.usage}</p>
-		</div>
-		<CommandList commands={mod.commands} />
-		<ConfigTable params={mod.configParams} />
+<a class="mod-card" id={`mod-${mod.id}`} data-category={mod.category} href={`/mods/${mod.id}`}>
+	<div class="mod-avatar" aria-hidden="true">
+		{mod.imageUrl
+			? <img src={mod.imageUrl} alt="" width="36" height="36" loading="lazy" />
+			: <span>{initials}</span>
+		}
 	</div>
-</article>
+	<div class="mod-summary">
+		<span class="mod-name">{mod.name}</span>
+		<span class="mod-meta">
+			<span class="mod-cat">{mod.category}</span>
+			<span class="mod-ver">{mod.version}</span>
+		</span>
+	</div>
+	<span class="mod-author">{mod.author}</span>
+	{mod.curseforgeUrl && (
+		<span class="ext-badge">CF</span>
+	)}
+	<svg class="arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+		<path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+	</svg>
+</a>
 
 <style>
-	.mod-card { border-bottom: 1px solid var(--border-muted); }
-	.mod-card:first-child { border-top: 1px solid var(--border-muted); }
-	.mod-row {
+	.mod-card {
 		display: flex; align-items: center; gap: 1rem;
 		width: 100%; padding: 1rem 0.5rem;
-		background: none; border: none; cursor: pointer; text-align: left;
+		text-decoration: none;
+		border-bottom: 1px solid var(--border-muted);
 		transition: background 0.15s; border-radius: 6px;
 	}
-	.mod-row:hover, .mod-row[aria-expanded="true"] { background: var(--surface-hover); }
-	.mod-row:hover .mod-name, .mod-row[aria-expanded="true"] .mod-name { color: var(--accent); }
+	.mod-card:first-child { border-top: 1px solid var(--border-muted); }
+	.mod-card:hover { background: var(--surface-hover); }
+	.mod-card:hover .mod-name { color: var(--accent); }
 	.mod-avatar {
 		width: 40px; height: 40px; border-radius: 10px;
 		background: var(--surface); border: 1px solid var(--border);
@@ -71,7 +60,8 @@ const initials = mod.name.split(" ").map((w: string) => w[0]).join("").slice(0, 
 	.mod-summary { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.25rem; }
 	.mod-name {
 		font-size: 1rem; font-weight: 600; color: var(--text);
-		white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.01em;
+		white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+		letter-spacing: -0.01em; transition: color 0.15s;
 	}
 	.mod-meta { display: flex; align-items: center; gap: 0.5rem; font-size: 0.775rem; }
 	.mod-cat { color: var(--text-3); }
@@ -81,31 +71,15 @@ const initials = mod.name.split(" ").map((w: string) => w[0]).join("").slice(0, 
 		padding: 0.05rem 0.4rem; border-radius: 3px;
 	}
 	.mod-author { font-size: 0.825rem; color: var(--text-3); white-space: nowrap; flex-shrink: 0; }
-	.ext-link {
-		font-size: 0.775rem; color: var(--text-3); text-decoration: none;
-		flex-shrink: 0; padding: 0.25rem 0.5rem; border-radius: 5px;
-		border: 1px solid var(--border); transition: color 0.1s, border-color 0.1s;
+	.ext-badge {
+		font-size: 0.7rem; font-weight: 600; color: var(--text-3);
+		border: 1px solid var(--border); padding: 0.2rem 0.45rem;
+		border-radius: 4px; flex-shrink: 0;
 	}
-	.ext-link:hover { color: var(--accent); border-color: var(--accent); }
-	.chevron { color: var(--text-3); flex-shrink: 0; transition: transform 0.2s, color 0.15s; }
-	.mod-row[aria-expanded="true"] .chevron { transform: rotate(180deg); color: var(--accent); }
-	.mod-detail {
-		padding: 0.25rem 0.5rem 1.5rem 3.5rem;
-		display: flex; flex-direction: column; gap: 1.25rem;
-	}
-	.mod-detail[hidden] { display: none; }
-	.detail-desc { font-size: 0.95rem; color: var(--text-2); line-height: 1.7; }
-	.detail-usage { display: flex; flex-direction: column; gap: 0.3rem; }
-	.section-label {
-		font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
-		letter-spacing: 0.08em; color: var(--text-3);
-	}
-	.usage-text { font-size: 0.925rem; color: var(--text-2); line-height: 1.65; }
+	.arrow { color: var(--text-3); flex-shrink: 0; transition: color 0.15s; }
+	.mod-card:hover .arrow { color: var(--accent); }
 	@media (max-width: 768px) {
 		.mod-author { display: none; }
-		.mod-detail { padding: 0.25rem 0 1.25rem 3rem; }
 		.mod-name { font-size: 0.95rem; }
 	}
 </style>
-
-<script src="../scripts/mod-card.ts"></script>

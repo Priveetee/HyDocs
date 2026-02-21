@@ -50,12 +50,6 @@ const modCounts = Object.fromEntries(
 		padding: 1.5rem 2rem 3rem;
 		display: flex; flex-direction: column; gap: 1px;
 	}
-	:global(.highlight) { animation: pulse-border 1.2s ease-out; }
-	@keyframes pulse-border {
-		0% { outline: 2px solid var(--border); outline-offset: 0; }
-		50% { outline: 2px solid var(--accent); outline-offset: 2px; }
-		100% { outline: 2px solid transparent; outline-offset: 0; }
-	}
 	@media (max-width: 768px) {
 		.sidebar { display: none; }
 		.content { padding: 0.75rem 1rem 5rem; }

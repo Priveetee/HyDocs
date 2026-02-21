@@ -85,17 +85,7 @@ function setActive(idx: number) {
 }
 
 function scrollToMod(id: string, _category: string) {
-	close();
-	const applyFilter = (window as unknown as Record<string, unknown>)
-		.applyFilter as ((f: string) => void) | undefined;
-	if (applyFilter) applyFilter("all");
-	setTimeout(() => {
-		const el = document.getElementById(`mod-${id}`);
-		if (!el) return;
-		el.scrollIntoView({ behavior: "smooth", block: "center" });
-		el.classList.add("highlight");
-		setTimeout(() => el.classList.remove("highlight"), 1200);
-	}, 50);
+	window.location.href = `/mods/${id}`;
 }
 
 window.addEventListener("open-search", open);
