@@ -22,7 +22,10 @@ serve({
 		let path = url.pathname === "/" ? "/index.html" : url.pathname;
 		let file = join(DIST, path);
 		try {
-			statSync(file);
+			const stat = statSync(file);
+			if (stat.isDirectory()) {
+				file = join(file, "index.html");
+			}
 		} catch {
 			file = join(DIST, "index.html");
 		}
